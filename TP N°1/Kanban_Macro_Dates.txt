@@ -1,0 +1,25 @@
+Private Sub Worksheet_Change(ByVal Target As Range)
+    ' Horodatage automatique selon le Statut (colonne F)
+    ' Colonnes : H = Date création, I = Date début, K = Date fin
+    Dim zone As Range, c As Range
+    Set zone = Intersect(Target, Me.Range("F5:F104"))
+    If zone Is Nothing Then Exit Sub
+    On Error GoTo Fin
+    Application.EnableEvents = False
+    For Each c In zone.Cells
+        If c.Value <> "" Then
+            If Me.Cells(c.Row, "H").Value = "" Then Me.Cells(c.Row, "H").Value = Date
+            If c.Value = "En cours" And Me.Cells(c.Row, "I").Value = "" Then
+                Me.Cells(c.Row, "I").Value = Date
+            End If
+            If c.Value = "Terminé" Then
+                If Me.Cells(c.Row, "I").Value = "" Then Me.Cells(c.Row, "I").Value = Date
+                If Me.Cells(c.Row, "K").Value = "" Then Me.Cells(c.Row, "K").Value = Date
+            Else
+                Me.Cells(c.Row, "K").ClearContents
+            End If
+        End If
+    Next c
+Fin:
+    Application.EnableEvents = True
+End Sub
